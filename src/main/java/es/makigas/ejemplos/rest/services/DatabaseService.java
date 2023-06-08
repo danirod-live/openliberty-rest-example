@@ -3,19 +3,21 @@ package es.makigas.ejemplos.rest.services;
 import es.makigas.ejemplos.rest.dao.CRUD;
 import es.makigas.ejemplos.rest.dao.Query;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import java.util.List;
 import java.util.Optional;
 
 class DatabaseService<M> implements CRUD<M> {
 
-    private PersistenceService persistence;
+	@PersistenceContext(name = "application")
+    private EntityManager manager;
     
     private Class<M> targetClass;
     
     private String entityName;
     
-    public DatabaseService(PersistenceService persistence, Class<M> target, String entityName) {
-        this.persistence = persistence;
+    public DatabaseService(Class<M> target, String entityName) {
         this.targetClass = target;
         this.entityName = entityName;
     }
@@ -40,10 +42,9 @@ class DatabaseService<M> implements CRUD<M> {
 
         @Override
         public List<M> get() {
-            EntityManager em = persistence.getEntityManager();
             String query = "SELECT e FROM {e} e".replace("{e}", entityName);
             int offset = (page - 1) * limit;
-            return (List<M>) em.createQuery(query)
+            return (List<M>) manager.createQuery(query)
                     .setMaxResults(limit)
                     .setFirstResult(offset)
                     .getResultList();
@@ -59,30 +60,24 @@ class DatabaseService<M> implements CRUD<M> {
 
     @Override
     public Optional<M> get(Object id) {
-        M entity = this.persistence.getEntityManager().find(this.targetClass, id);
+        M entity = manager.find(this.targetClass, id);
         return Optional.ofNullable(entity);
     }
 
     @Override
     public M insert(M model) { 
-        this.persistence.getEntityManager().getTransaction().begin();
-        this.persistence.getEntityManager().persist(model);
-        this.persistence.getEntityManager().getTransaction().commit();
+    	manager.persist(model);
         return model;
     }
 
     @Override
     public void update(M model) {
-        this.persistence.getEntityManager().getTransaction().begin();
-        this.persistence.getEntityManager().merge(model);
-        this.persistence.getEntityManager().getTransaction().commit();
+    	manager.merge(model);
     }
 
     @Override
     public void delete(M model) {
-        this.persistence.getEntityManager().getTransaction().begin();
-        this.persistence.getEntityManager().remove(model);
-        this.persistence.getEntityManager().getTransaction().commit();
+    	manager.remove(model);
     }
     
 }

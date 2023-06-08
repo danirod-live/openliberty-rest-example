@@ -8,11 +8,6 @@ import jakarta.inject.Inject;
 public class ProfesorService extends DatabaseService<Profesor> {
 
     public ProfesorService() {
-        super(null, Profesor.class, "Profesor");
-    }
-
-    @Inject
-    public ProfesorService(PersistenceService service) {
-        super(service, Profesor.class, "Profesor");
+        super(Profesor.class, "Profesor");
     }
 }

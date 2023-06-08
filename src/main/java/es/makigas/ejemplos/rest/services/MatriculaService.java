@@ -9,11 +9,6 @@ import jakarta.inject.Inject;
 public class MatriculaService extends DatabaseService<Matricula>
 {
     public MatriculaService() {
-        super(null, Matricula.class, "Matricula");
-    }
-    
-    @Inject
-    public MatriculaService(PersistenceService service) {
-        super(service, Matricula.class, "Matricula");
+        super(Matricula.class, "Matricula");
     }
 }

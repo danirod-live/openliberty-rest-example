@@ -9,11 +9,7 @@ import jakarta.inject.Inject;
 public class AsignaturaService extends DatabaseService<Asignatura> {
 
     public AsignaturaService() {
-        super(null, Asignatura.class, "Asignatura");
+        super(Asignatura.class, "Asignatura");
     }
     
-    @Inject
-    public AsignaturaService(PersistenceService service) {
-        super(service, Asignatura.class, "Asignatura");
-    }
 }
